@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserBookRepository extends JpaRepository<UserBook, Long> {
     @Query("SELECT ub FROM UserBook ub WHERE ub.user.clerkId = :clerkId")
