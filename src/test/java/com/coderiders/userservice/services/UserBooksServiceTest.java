@@ -116,7 +116,7 @@ public class UserBooksServiceTest {
                 title("The Hobbit").
                 author(author).
                 publisher("Houghton Mifflin").
-                publishedDate(publishDate).
+                publishedDate("1999-10-01").
                 description("Bilbo Baggins, a hobbit, embarks on a quest.").
                 isbn10("1234567890").
                 isbn13("0987654321").
