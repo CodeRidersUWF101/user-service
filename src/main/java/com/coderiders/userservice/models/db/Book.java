@@ -35,7 +35,7 @@ public class Book {
     private String publisher;
 
     @Column(name = "published_date")
-    private LocalDate publishedDate;
+    private String publishedDate;
 
     private String description;
 
