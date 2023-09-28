@@ -2,13 +2,17 @@ package com.coderiders.userservice.models.db;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Data
 @Entity
 @Table(name = "userbooks")
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserBook {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
