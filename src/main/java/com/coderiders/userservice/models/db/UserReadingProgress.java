@@ -2,13 +2,17 @@ package com.coderiders.userservice.models.db;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Data
 @Entity
 @Table(name = "userreadingprogress")
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserReadingProgress {
 
     @Id

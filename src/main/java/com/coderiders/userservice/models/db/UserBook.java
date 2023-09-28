@@ -1,15 +1,18 @@
 package com.coderiders.userservice.models.db;
 
-import com.coderiders.userservice.models.ReadingStatus;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Data
 @Entity
 @Table(name = "userbooks")
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserBook {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,9 +30,9 @@ public class UserBook {
     private Book book;
 
     @Column(nullable = false, updatable = false)
-    private LocalDateTime addedDate = LocalDateTime.now();
+    private LocalDateTime addedDate;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "reading_status", nullable = false)
-    private ReadingStatus readingStatus = ReadingStatus.NOT_STARTED;
+    @Column(name = "reading_status")
+    private String readingStatus;
+
 }

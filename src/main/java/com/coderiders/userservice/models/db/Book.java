@@ -1,14 +1,20 @@
 package com.coderiders.userservice.models.db;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
 
 import java.time.LocalDate;
 
 @Data
 @Entity
+@Builder
 @Table(name = "books")
+@AllArgsConstructor
+@NoArgsConstructor
 public class Book {
 
     @Id
@@ -18,8 +24,12 @@ public class Book {
     @Column(nullable = false)
     private String title;
 
+    @Column(nullable = false, name = "api_id")
+    private String apiId;
+
     @Column(nullable = false)
-    private String author;
+    @Type(value = com.coderiders.userservice.config.CustomStringArrayType.class)
+    private String[] author;
 
     @Column
     private String publisher;
@@ -27,7 +37,6 @@ public class Book {
     @Column(name = "published_date")
     private LocalDate publishedDate;
 
-    @Column(length = 1000)  // Assuming we want a longer description column.
     private String description;
 
     @Column(name = "isbn_10")
@@ -41,7 +50,6 @@ public class Book {
 
     @Column(name = "print_type")
     private String printType;
-
 
     @Column(name = "categories")
     @Type(value = com.coderiders.userservice.config.CustomStringArrayType.class)
@@ -61,6 +69,4 @@ public class Book {
 
     @Column
     private String thumbnail;
-
-// getters, setters, and other methods
 }
