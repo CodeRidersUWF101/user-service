@@ -1,21 +1,20 @@
 package com.coderiders.userservice.controller;
 
-import com.coderiders.userservice.exceptions.UserServiceException;
-import com.coderiders.userservice.models.db.Book;
+import com.coderiders.commonutils.models.UserLibrary;
 import com.coderiders.userservice.models.db.User;
 import com.coderiders.userservice.models.request.SaveBookRequest;
 import com.coderiders.userservice.services.UserBooksService;
 import com.coderiders.userservice.services.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
+import java.util.List;
 
+@Slf4j
 @RefreshScope
 @RestController
 @RequiredArgsConstructor
@@ -25,28 +24,23 @@ public class UserController {
     private final UserBooksService userBooksService;
 
     @GetMapping("/")
-    public String myRoute() {
-        return "Successful RecommendationController";
-    }
+    public String myRoute() {  return "Successful RecommendationController"; }
 
     @GetMapping("/{clerkId}")
     public ResponseEntity<User> myRoute(@PathVariable String clerkId) {
-        User myUser = userService.getUserByClerkId(clerkId);
-        return new ResponseEntity<>(myUser, HttpStatus.OK);
-    }
-
-    @GetMapping("/exceptionTest")
-    public String myRouteException() {
-        throw new UserServiceException("My Exception Test");
-//        return "Successful RecommendationController";
+        log.info("getUserByClerkId for: " + clerkId);
+        return new ResponseEntity<>(userService.getUserByClerkId(clerkId), HttpStatus.OK);
     }
 
     @PostMapping("/users/library")
     public Long saveBooks(@RequestBody SaveBookRequest payload) {
+        log.info("saveBooks for: " + payload.getClerkId());
         return userBooksService.saveBook(payload);
+    }
 
-
-//        System.out.println(payload);
-
+    @GetMapping("/users/library")
+    public List<UserLibrary> getBooks(@RequestParam("clerk_id") String clerkId) {
+        log.info("Get Library for: " + clerkId);
+        return userBooksService.getUserLibrary(clerkId);
     }
 }
