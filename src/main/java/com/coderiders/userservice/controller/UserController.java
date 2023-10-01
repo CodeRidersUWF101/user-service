@@ -1,9 +1,12 @@
 package com.coderiders.userservice.controller;
 
-import com.coderiders.commonutils.models.UserLibrary;
+import com.coderiders.commonutils.models.UserLibraryWithBookDetails;
+import com.coderiders.commonutils.models.googleBooks.GoogleBook;
+import com.coderiders.commonutils.models.googleBooks.SaveBookRequest;
+import com.coderiders.userservice.models.db.Book;
 import com.coderiders.userservice.models.db.User;
-import com.coderiders.userservice.models.request.SaveBookRequest;
-import com.coderiders.userservice.services.UserBooksService;
+import com.coderiders.userservice.services.BooksService;
+import com.coderiders.userservice.services.UserLibraryService;
 import com.coderiders.userservice.services.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +24,8 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-    private final UserBooksService userBooksService;
+    private final UserLibraryService userLibraryService;
+    private final BooksService booksService;
 
     @GetMapping("/")
     public String myRoute() {  return "Successful RecommendationController"; }
@@ -34,13 +38,20 @@ public class UserController {
 
     @PostMapping("/users/library")
     public Long saveBooks(@RequestBody SaveBookRequest payload) {
-        log.info("saveBooks for: " + payload.getClerkId());
-        return userBooksService.saveBook(payload);
+        log.info("saveBooks for: " + payload.toString());
+        return userLibraryService.saveBook(payload);
     }
 
     @GetMapping("/users/library")
-    public List<UserLibrary> getBooks(@RequestParam("clerk_id") String clerkId) {
+    public List<UserLibraryWithBookDetails> getBooks(@RequestParam("clerk_id") String clerkId) {
         log.info("Get Library for: " + clerkId);
-        return userBooksService.getUserLibrary(clerkId);
+        return userLibraryService.getUserLibraryForClerkId(clerkId);
+    }
+
+    @PostMapping("/users/books")
+    public String saveBooks(@RequestBody List<GoogleBook> books) {
+        log.info("Post Books");
+        List<Book> booksToReturn = booksService.saveBooks(books);
+        return "SAVED";
     }
 }

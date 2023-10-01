@@ -4,21 +4,20 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
+
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "userbooks")
+@Table(name = "userlibrary")
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserBook {
+public class UserLibrary {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_book_id")
     private Long id;
-
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_clerk_id", referencedColumnName = "clerk_id")
@@ -34,5 +33,11 @@ public class UserBook {
 
     @Column(name = "reading_status")
     private String readingStatus;
+
+    @Column(name = "last_page_read")
+    private Integer lastPageRead;
+
+    @Column(name = "last_updated")
+    private LocalDateTime lastReadingUpdate;
 
 }

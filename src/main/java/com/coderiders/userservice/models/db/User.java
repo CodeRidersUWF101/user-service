@@ -37,6 +37,6 @@ public class User {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
-    private List<UserBook> userBooks = new ArrayList<>();
+    private List<UserLibrary> userBooks = new ArrayList<>();
 
 }
