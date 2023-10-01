@@ -34,6 +34,8 @@ public class Utilities {
     }
 
     private static String getIndustryIdentifier(final GoogleBook googleBook, final String type) {
+        if (googleBook.volumeInfo.industryIdentifiers == null) { return null; }
+
         return googleBook.volumeInfo.industryIdentifiers.stream()
                 .filter(b -> b.type.equalsIgnoreCase(type))
                 .map(b -> b.identifier)
