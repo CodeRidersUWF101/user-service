@@ -1,14 +1,15 @@
 package com.coderiders.userservice.services;
 
+import com.coderiders.commonutils.models.googleBooks.SaveBookRequest;
 import com.coderiders.userservice.models.db.Book;
 import com.coderiders.userservice.models.db.User;
-import com.coderiders.userservice.models.db.UserBook;
-import com.coderiders.userservice.models.request.SaveBookRequest;
+import com.coderiders.userservice.models.db.UserLibrary;
 import com.coderiders.userservice.repositories.BookRepository;
-import com.coderiders.userservice.repositories.UserBookRepository;
+import com.coderiders.userservice.repositories.UserLibraryRepository;
 import com.coderiders.userservice.repositories.UserRepository;
-import com.coderiders.userservice.services.Impl.UserBooksServiceImpl;
+import com.coderiders.userservice.services.Impl.UserLibraryServiceImpl;
 import com.coderiders.userservice.services.Impl.UserServiceImpl;
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,11 +28,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.times;
 
 @ExtendWith(SpringExtension.class)
-public class UserBooksServiceTest {
+public class UserLibraryServiceTest {
 
     // used to mock the service layer
     @Mock
-    private UserBookRepository userBookRepository;
+    private UserLibraryRepository userBookRepository;
     @Mock
     private BookRepository bookRepository;
     @Mock
@@ -39,13 +40,14 @@ public class UserBooksServiceTest {
 
     // used to service the controller
     private UserServiceImpl userServiceImpl;
-    private UserBooksService userBooksService;
-    private UserBooksServiceImpl userBooksServiceImpl;
+    private UserLibraryService userLibraryService;
+    private UserLibraryServiceImpl userBooksServiceImpl;
+    private EntityManager entityManager;
 
     // implement the mocked databases into the service we are testing
     @BeforeEach
     void setUp() {
-        userBooksServiceImpl = new UserBooksServiceImpl(userBookRepository, bookRepository, userRepository);
+        userBooksServiceImpl = new UserLibraryServiceImpl(userBookRepository, bookRepository, userRepository, entityManager);
         userServiceImpl = new UserServiceImpl(userRepository);
     }
 
@@ -103,7 +105,6 @@ public class UserBooksServiceTest {
         // Values needed to create a book.
         // This book was pulled as an exact match from the database
         String[] author = {"J.R.R. Tolkien"};
-        LocalDate publishDate = LocalDate.of(1937, 9, 21);
         String[] categories = {"Fantasy"};
 
         // saving a book first requires a check into our
@@ -136,8 +137,8 @@ public class UserBooksServiceTest {
 
         // creating a user book to mock the database call
         LocalDateTime todayDate = LocalDateTime.now();
-        UserBook userBook = UserBook.builder().
-                id(1l).
+        UserLibrary userBook = UserLibrary.builder().
+                id(1L).
                 user(user).
                 book(book).
                 addedDate(todayDate).
@@ -148,14 +149,14 @@ public class UserBooksServiceTest {
         Mockito.when(userBookRepository.save(Mockito.any()))
                 .thenReturn(userBook);
 
-        List<UserBook> userBookList = new ArrayList<UserBook>();
+        List<UserLibrary> userBookList = new ArrayList<>();
         userBookList.add(userBook);
 
         // when searching for a list of books from a user, return the above list of books
-        Mockito.when(userBookRepository.findByUserClerkId(Mockito.any()))
+        Mockito.when(userBookRepository.findAllByUserClerkId(Mockito.any()))
                 .thenReturn(userBookList);
 
-        SaveBookRequest saveBookRequest = SaveBookRequest.builder().clerkId("50156").isbn_10("2312546785").build();
+        SaveBookRequest saveBookRequest = SaveBookRequest.builder().clerkId("50156").isbn10("2312546785").build();
 
         // act
         var bookResponse = userBooksServiceImpl.saveBook(saveBookRequest);
@@ -165,9 +166,9 @@ public class UserBooksServiceTest {
         assertNotNull(bookResponse);
 
         // Expected Behavior, this is how many times we expected the database to have a save implemented
-        Mockito.verify(userBookRepository, times(1)).save((UserBook) Mockito.any());
+        Mockito.verify(userBookRepository, times(1)).save(Mockito.any());
 
         // Finding the book that was saved
-        assertEquals(userBookList, userBookRepository.findByUserClerkId("50156"));
+        assertEquals(userBookList, userBookRepository.findAllByUserClerkId("50156"));
     }
 }
