@@ -54,4 +54,10 @@ public class UserController {
         List<Book> booksToReturn = booksService.saveBooks(books);
         return "SAVED";
     }
+
+    @PostMapping("/users/signup")
+    public com.coderiders.commonutils.models.User addNewUser(@RequestBody com.coderiders.commonutils.models.User user) {
+        log.info("/users/signup POST ENDPOINT HIT: " + user.getClerkId());
+        return userService.addNewUser(user);
+    }
 }
