@@ -16,13 +16,11 @@ public class UserRecommendation {
     @Column(name = "recommendation_id")
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_clerk_id", referencedColumnName = "clerk_id")
-    private User user;
+    @Column(name = "user_clerk_id")
+    private String userClerkId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "book_id", referencedColumnName = "book_id")
-    private Book book;
+    @Column(name = "book_id")
+    private String bookId;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime recommendationDate = LocalDateTime.now();
@@ -33,5 +31,4 @@ public class UserRecommendation {
     @Column
     private Integer rating;
 
-    // getters, setters, and other methods
 }

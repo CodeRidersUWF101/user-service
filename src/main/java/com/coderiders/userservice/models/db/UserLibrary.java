@@ -1,6 +1,5 @@
 package com.coderiders.userservice.models.db;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,14 +18,11 @@ public class UserLibrary {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_clerk_id", referencedColumnName = "clerk_id")
-    @JsonBackReference
-    private User user;
+    @Column(name = "user_clerk_id")
+    private String userClerkId;
 
-    @ManyToOne
-    @JoinColumn(name = "book_id")
-    private Book book;
+    @Column(name = "book_id")
+    private String bookId;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime addedDate;

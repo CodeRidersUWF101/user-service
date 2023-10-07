@@ -1,12 +1,9 @@
 package com.coderiders.userservice.controller;
 
 import com.coderiders.commonutils.models.UserLibraryWithBookDetails;
-import com.coderiders.commonutils.models.googleBooks.GoogleBook;
 import com.coderiders.commonutils.models.googleBooks.SaveBookRequest;
 import com.coderiders.commonutils.models.requests.UpdateProgress;
-import com.coderiders.userservice.models.db.Book;
 import com.coderiders.userservice.models.db.User;
-import com.coderiders.userservice.services.BooksService;
 import com.coderiders.userservice.services.UserLibraryService;
 import com.coderiders.userservice.services.UserService;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +23,6 @@ public class UserController {
 
     private final UserService userService;
     private final UserLibraryService userLibraryService;
-    private final BooksService booksService;
 
     @GetMapping("/")
     public String myRoute() {  return "Successful RecommendationController"; }
@@ -44,22 +40,15 @@ public class UserController {
     }
 
     @PostMapping("/users/library")
-    public Long saveBooks(@RequestBody SaveBookRequest payload) {
-        log.info("/users/library POST ENDPOINT HIT: " + payload.toString());
-        return userLibraryService.saveBook(payload);
+    public String saveBooks(@RequestBody SaveBookRequest payload) {
+        log.info("/users/library POST ENDPOINT HIT: " + payload.getUser().getClerkId());
+        return userLibraryService.saveBookCustom(payload);
     }
 
     @PatchMapping("/users/library")
     public UpdateProgress updateReadingProgress(@RequestBody UpdateProgress updateProgress) {
         log.info("/users/signup PATCH ENDPOINT HIT: " + updateProgress.getClerkId());
         return userService.updateReadingProgress(updateProgress);
-    }
-
-    @PostMapping("/users/books")
-    public String saveBooks(@RequestBody List<GoogleBook> books) {
-        log.info("/users/books POST ENDPOINT HIT");
-        List<Book> booksToReturn = booksService.saveBooks(books);
-        return "SAVED";
     }
 
     @PostMapping("/users/signup")
