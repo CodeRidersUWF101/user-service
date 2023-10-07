@@ -17,7 +17,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +47,7 @@ public class UserLibraryServiceTest {
     @BeforeEach
     void setUp() {
         userBooksServiceImpl = new UserLibraryServiceImpl(userBookRepository, bookRepository, userRepository, entityManager);
-        userServiceImpl = new UserServiceImpl(userRepository);
+        userServiceImpl = new UserServiceImpl(userRepository, entityManager);
     }
 
     // find user test find a user object based off of clerk ID
