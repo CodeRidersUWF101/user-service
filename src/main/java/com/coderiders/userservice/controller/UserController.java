@@ -3,6 +3,7 @@ package com.coderiders.userservice.controller;
 import com.coderiders.commonutils.models.UserLibraryWithBookDetails;
 import com.coderiders.commonutils.models.googleBooks.GoogleBook;
 import com.coderiders.commonutils.models.googleBooks.SaveBookRequest;
+import com.coderiders.commonutils.models.requests.UpdateProgress;
 import com.coderiders.userservice.models.db.Book;
 import com.coderiders.userservice.models.db.User;
 import com.coderiders.userservice.services.BooksService;
@@ -36,21 +37,27 @@ public class UserController {
         return new ResponseEntity<>(userService.getUserByClerkId(clerkId), HttpStatus.OK);
     }
 
+    @GetMapping("/users/library")
+    public List<UserLibraryWithBookDetails> getBooks(@RequestParam("clerk_id") String clerkId) {
+        log.info("/users/library GET ENDPOINT HIT: " + clerkId);
+        return userLibraryService.getUserLibraryForClerkId(clerkId);
+    }
+
     @PostMapping("/users/library")
     public Long saveBooks(@RequestBody SaveBookRequest payload) {
-        log.info("saveBooks for: " + payload.toString());
+        log.info("/users/library POST ENDPOINT HIT: " + payload.toString());
         return userLibraryService.saveBook(payload);
     }
 
-    @GetMapping("/users/library")
-    public List<UserLibraryWithBookDetails> getBooks(@RequestParam("clerk_id") String clerkId) {
-        log.info("Get Library for: " + clerkId);
-        return userLibraryService.getUserLibraryForClerkId(clerkId);
+    @PatchMapping("/users/library")
+    public UpdateProgress updateReadingProgress(@RequestBody UpdateProgress updateProgress) {
+        log.info("/users/signup PATCH ENDPOINT HIT: " + updateProgress.getClerkId());
+        return userService.updateReadingProgress(updateProgress);
     }
 
     @PostMapping("/users/books")
     public String saveBooks(@RequestBody List<GoogleBook> books) {
-        log.info("Post Books");
+        log.info("/users/books POST ENDPOINT HIT");
         List<Book> booksToReturn = booksService.saveBooks(books);
         return "SAVED";
     }
