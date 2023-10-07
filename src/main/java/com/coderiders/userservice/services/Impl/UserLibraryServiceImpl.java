@@ -1,15 +1,13 @@
 package com.coderiders.userservice.services.Impl;
 
-
+import com.coderiders.commonutils.models.User;
 import com.coderiders.commonutils.models.UserLibraryWithBookDetails;
 import com.coderiders.commonutils.models.googleBooks.SaveBookRequest;
-import com.coderiders.userservice.exceptions.BookNotFoundException;
 import com.coderiders.userservice.models.ReadingStatus;
 import com.coderiders.userservice.models.db.Book;
-import com.coderiders.userservice.models.db.User;
+import com.coderiders.userservice.models.db.UserLibrary;
 import com.coderiders.userservice.repositories.BookRepository;
 import com.coderiders.userservice.repositories.UserLibraryRepository;
-import com.coderiders.userservice.repositories.UserRepository;
 import com.coderiders.userservice.services.UserLibraryService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
@@ -19,8 +17,9 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+
+import static com.coderiders.userservice.utilities.Utilities.ulwbdToBook;
 
 @Service
 @Transactional
@@ -29,70 +28,112 @@ public class UserLibraryServiceImpl implements UserLibraryService {
 
     private final UserLibraryRepository userLibraryRepository;
     private final BookRepository bookRepository;
-    private final UserRepository userRepository;
     private final EntityManager entityManager;
 
     @Override
     public Long saveBook(SaveBookRequest bookToSave) {
-        User newUser = userRepository.findByClerkId(bookToSave.getClerkId());
-        Book bookSaving = bookRepository.findByIsbn10OrIsbn13(bookToSave.getIsbn10(), bookToSave.getIsbn13()).orElseGet(null);
-        if (bookSaving == null) {
-            throw new BookNotFoundException("Book with ISBN10: " + bookToSave.getIsbn10() + " and/or ISBN13: " + bookToSave.getIsbn13() + " could not be found.");
+        UserLibraryWithBookDetails ulwbd = bookToSave.getBook();
+        Book bookSaving = bookRepository.findByIsbn10OrIsbn13(ulwbd.getIsbn_10(), ulwbd.getIsbn_13()).orElseGet(Book::new);
+
+        if (bookSaving.getBookId() == null) {
+            bookSaving = bookRepository.save(ulwbdToBook(ulwbd));
         }
 
-        com.coderiders.userservice.models.db.UserLibrary newBook = new com.coderiders.userservice.models.db.UserLibrary();
-        newBook.setUser(newUser);
-        newBook.setBook(bookSaving);
-        newBook.setAddedDate(LocalDateTime.now());
-        newBook.setReadingStatus(ReadingStatus.NOT_STARTED.value);
+        UserLibrary userLibrary = new UserLibrary();
+        userLibrary.setUserClerkId(bookToSave.getUser().getClerkId());
+        userLibrary.setBookId(bookSaving.getBookId());
+        userLibrary.setAddedDate(LocalDateTime.now());
+        userLibrary.setReadingStatus(ReadingStatus.NOT_STARTED.value);
 
-        return userLibraryRepository.save(newBook).getId();
+        return userLibraryRepository.save(userLibrary).getId();
+    }
 
+    @Override
+    @Transactional
+    public String saveBookCustom(SaveBookRequest bookRequest) {
+        User user = bookRequest.getUser();
+        UserLibraryWithBookDetails book = bookRequest.getBook();
+        try {
+
+            String sql = "SELECT add_user_book_to_library(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+            Query query = entityManager.createNativeQuery(sql);
+
+            // User object
+            query.setParameter(1, user.getClerkId());
+            query.setParameter(2, user.getUsername());
+            query.setParameter(3, user.getFirstName());
+            query.setParameter(4, user.getLastName());
+            query.setParameter(5, user.getImageUrl());
+
+            // Book object
+            query.setParameter(6, book.getBook_id());
+            query.setParameter(7, book.getApi_id());
+            query.setParameter(8, book.getTitle());
+            query.setParameter(9, book.getAuthor());
+            query.setParameter(10, book.getPublisher());
+            query.setParameter(11, book.getPublished_date());
+            query.setParameter(12, book.getDescription());
+            query.setParameter(13, book.getIsbn_10());
+            query.setParameter(14, book.getIsbn_13());
+            query.setParameter(15, book.getPage_count());
+            query.setParameter(16, book.getPrint_type());
+            query.setParameter(17, book.getCategories());
+            query.setParameter(18, book.getAverage_rating());
+            query.setParameter(19, book.getRatings_count());
+            query.setParameter(20, book.getMaturity_rating());
+            query.setParameter(21, book.getSmall_thumbnail());
+            query.setParameter(22, book.getThumbnail());
+
+            return query.getSingleResult().toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override
     public List<UserLibraryWithBookDetails> getUserLibraryForClerkId(String clerkId) {
-        String sqlQuery = "SELECT ul.book_id, b.api_id, b.title, b.author, b.publisher, b.published_date, " +
-                "b.description, b.isbn_10, b.isbn_13, b.page_count, b.print_type, b.categories, b.average_rating, " +
-                "b.ratings_count, b.maturity_rating, b.small_thumbnail, b.thumbnail, ul.reading_status, " +
-                "ul.last_page_read, ul.last_updated " +
-                "FROM UserLibrary ul " +
-                "JOIN Books b ON ul.book_id = b.book_id " +
-                "WHERE ul.user_clerk_id = :clerkId";
+        String attempt2 = """
+                SELECT
+                b.*,
+                ul.reading_status,
+                ul.last_page_read,
+                ul.last_updated
+                FROM UserLibrary ul
+                JOIN Books b ON ul.book_id = b.book_id
+                WHERE ul.user_clerk_id = :clerkId
+                """;
 
-        Query query = entityManager.createNativeQuery(sqlQuery)
-                .setParameter("clerkId", clerkId);
+        Query query = entityManager.createNativeQuery(attempt2).setParameter("clerkId", clerkId);
 
-        List<UserLibraryWithBookDetails> userLibraryList = new ArrayList<>();
         List<Object[]> resultList = query.getResultList();
+        return bookToUserLibraryWithBookDetails(resultList);
+    }
 
-        for (Object[] row : resultList) {
-            UserLibraryWithBookDetails userLibrary = new UserLibraryWithBookDetails();
-            userLibrary.setBook_id((String) row[0]);
-            userLibrary.setApi_id((String) row[1]);
-            userLibrary.setTitle((String) row[2]);
-            userLibrary.setAuthor((String[]) row[3]);
-            userLibrary.setPublisher((String) row[4]);
-            userLibrary.setPublished_date((String) row[5]);
-            userLibrary.setDescription((String) row[6]);
-            userLibrary.setIsbn_10((String) row[7]);
-            userLibrary.setIsbn_13((String) row[8]);
-
-            userLibrary.setPage_count(row[9] != null ? (Integer) row[9] : null);
-            userLibrary.setAverage_rating(row[12] != null ? (Double) row[12] : null);
-
-            userLibrary.setRatings_count((Integer) row[13]);
-            userLibrary.setMaturity_rating((String) row[14]);
-            userLibrary.setSmall_thumbnail((String) row[15]);
-            userLibrary.setThumbnail((String) row[16]);
-            userLibrary.setReading_status((String) row[17]);
-
-            userLibrary.setLast_page_read(row[18] != null ? (Integer) row[18] : null);
-            userLibrary.setLast_reading_update(row[19] != null ? (Timestamp) row[19] : null);
-
-            userLibraryList.add(userLibrary);
-        }
-
-        return userLibraryList;
+    private List<UserLibraryWithBookDetails> bookToUserLibraryWithBookDetails(List<Object[]> resultList) {
+        return resultList.stream()
+                .map(row -> UserLibraryWithBookDetails.builder()
+                .book_id((String) row[0])
+                .api_id((String) row[1])
+                .title((String) row[2])
+                .author((String[]) row[3])
+                .publisher((String) row[4])
+                .published_date((String) row[5])
+                .description((String) row[6])
+                .isbn_10((String) row[7])
+                .isbn_13((String) row[8])
+                .page_count(row[9] != null ? (Integer) row[9] : null)
+                .categories((String[]) row[11])
+                .average_rating(row[12] != null ? (Double) row[12] : null)
+                .ratings_count((Integer) row[13])
+                .maturity_rating((String) row[14])
+                .small_thumbnail((String) row[15])
+                .thumbnail((String) row[16])
+                .reading_status((String) row[17])
+                .last_page_read(row[18] != null ? (Integer) row[18] : null)
+                .last_reading_update(row[19] != null ? (Timestamp) row[19] : null)
+                .isInLibrary(true)
+                .build()).toList();
     }
 }

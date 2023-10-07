@@ -8,6 +8,7 @@ import com.coderiders.userservice.utilities.Utilities;
 import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.sql.PreparedStatement;
@@ -21,6 +22,9 @@ public class BooksServiceImpl implements BooksService {
     private final BookRepository bookRepository;
     private final JdbcTemplate jdbcTemplate;
 
+    /**
+     * @deprecated
+     */
     @Override
     public List<Book> saveBooks(List<GoogleBook> books) {
         List<String> ids = books.stream().map(GoogleBook::getId).toList();
@@ -29,16 +33,18 @@ public class BooksServiceImpl implements BooksService {
         bulkSaveBooks(booksToSave);
 
         return List.of(new Book());
-
     }
 
+    /**
+     * @deprecated
+     */
     public void bulkSaveBooks(List<Book> books) {
         String sql = "INSERT INTO books (book_id, api_id, title, author, publisher, published_date, description, isbn_10, isbn_13, page_count, print_type, categories, average_rating, ratings_count, maturity_rating, small_thumbnail, thumbnail) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
             @Override
-            public void setValues(PreparedStatement ps, int i) throws SQLException {
+            public void setValues(@NonNull PreparedStatement ps, int i) throws SQLException {
                 Book book = books.get(i);
                 setBookValues(ps, book);
             }
@@ -50,6 +56,9 @@ public class BooksServiceImpl implements BooksService {
         });
     }
 
+    /**
+     * @deprecated
+     */
     private void setBookValues(PreparedStatement ps, Book book) throws SQLException {
         ps.setString(1, book.getBookId());
         ps.setString(2, book.getApiId());
