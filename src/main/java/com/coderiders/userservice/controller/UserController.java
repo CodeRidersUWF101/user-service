@@ -18,6 +18,7 @@ import java.util.List;
 @Slf4j
 @RefreshScope
 @RestController
+@RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -33,25 +34,31 @@ public class UserController {
         return new ResponseEntity<>(userService.getUserByClerkId(clerkId), HttpStatus.OK);
     }
 
-    @GetMapping("/users/library")
+    @GetMapping("/library")
     public List<UserLibraryWithBookDetails> getBooks(@RequestParam("clerk_id") String clerkId) {
         log.info("/users/library GET ENDPOINT HIT: " + clerkId);
         return userLibraryService.getUserLibraryForClerkId(clerkId);
     }
 
-    @PostMapping("/users/library")
+    @PostMapping("/library")
     public String saveBooks(@RequestBody SaveBookRequest payload) {
         log.info("/users/library POST ENDPOINT HIT: " + payload.getUser().getClerkId());
         return userLibraryService.saveBookCustom(payload);
     }
 
-    @PatchMapping("/users/library")
+    @PatchMapping("/library")
     public UpdateProgress updateReadingProgress(@RequestBody UpdateProgress updateProgress) {
         log.info("/users/signup PATCH ENDPOINT HIT: " + updateProgress.getClerkId());
         return userService.updateReadingProgress(updateProgress);
     }
 
-    @PostMapping("/users/signup")
+    @DeleteMapping("/library")
+    public String deleteUserBook(@RequestParam("book_id") String bookId, @RequestParam("clerk_id") String clerkId) {
+        log.info("/users/signup DELETE ENDPOINT HIT: {} for book: {}", clerkId, bookId);
+        return userLibraryService.removeBook(bookId, clerkId);
+    }
+
+    @PostMapping("/signup")
     public com.coderiders.commonutils.models.User addNewUser(@RequestBody com.coderiders.commonutils.models.User user) {
         log.info("/users/signup POST ENDPOINT HIT: " + user.getClerkId());
         return userService.addNewUser(user);
