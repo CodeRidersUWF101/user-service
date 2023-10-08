@@ -3,6 +3,7 @@ package com.coderiders.userservice.services.Impl;
 import com.coderiders.commonutils.models.User;
 import com.coderiders.commonutils.models.UserLibraryWithBookDetails;
 import com.coderiders.commonutils.models.googleBooks.SaveBookRequest;
+import com.coderiders.userservice.exceptions.UserServiceException;
 import com.coderiders.userservice.models.ReadingStatus;
 import com.coderiders.userservice.models.db.Book;
 import com.coderiders.userservice.models.db.UserLibrary;
@@ -13,6 +14,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -21,6 +23,7 @@ import java.util.List;
 
 import static com.coderiders.userservice.utilities.Utilities.ulwbdToBook;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -109,6 +112,24 @@ public class UserLibraryServiceImpl implements UserLibraryService {
 
         List<Object[]> resultList = query.getResultList();
         return bookToUserLibraryWithBookDetails(resultList);
+    }
+
+    @Override
+    @Transactional
+    public String removeBook(String bookId, String clerkId) {
+        String queryStr = "SELECT remove_book_from_userlibrary(:clerkId, :bookId)";
+
+        Query query = entityManager.createNativeQuery(queryStr)
+                .setParameter("clerkId", clerkId)
+                .setParameter("bookId", bookId);
+
+        String results = query.getSingleResult().toString();
+        log.debug("Delete Results: {}", results);
+
+        if (results == null || results.equalsIgnoreCase("null")) {
+            throw new UserServiceException("Failed to remove book from user's library. Might not exist");
+        }
+        return results;
     }
 
     private List<UserLibraryWithBookDetails> bookToUserLibraryWithBookDetails(List<Object[]> resultList) {

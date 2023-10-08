@@ -10,4 +10,5 @@ public interface UserLibraryService {
     Long saveBook(SaveBookRequest bookToSave);
     String saveBookCustom(SaveBookRequest bookToSave);
     List<UserLibraryWithBookDetails> getUserLibraryForClerkId(String userClerkId);
+    String removeBook(String bookId, String clerkId);
 }

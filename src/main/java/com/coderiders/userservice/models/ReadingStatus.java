@@ -2,7 +2,7 @@ package com.coderiders.userservice.models;
 
 public enum ReadingStatus {
     NOT_STARTED("NOT_STARTED"),
-    STARTED("STARTED"),
+    IN_PROGRESS("IN_PROGRESS"),
     COMPLETED("COMPLETED");
 
     public final String value;
