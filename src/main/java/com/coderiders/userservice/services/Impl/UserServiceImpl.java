@@ -1,6 +1,7 @@
 package com.coderiders.userservice.services.Impl;
 
 import com.coderiders.commonutils.models.UtilsUser;
+import com.coderiders.commonutils.models.requests.AddFriend;
 import com.coderiders.commonutils.models.requests.UpdateProgress;
 import com.coderiders.userservice.exceptions.UserServiceException;
 import com.coderiders.userservice.models.db.User;
@@ -105,5 +106,22 @@ public class UserServiceImpl implements UserService {
             user.setImageUrl(rs.getString("image_url"));
             return user;
         });
+    }
+
+    public AddFriend addFriend(AddFriend friendRequest) {
+        String queryStr = "INSERT INTO Friends (user_clerk_id1, user_clerk_id2, status) " +
+                "VALUES (:user_clerk_id1, :user_clerk_id2, :status)";
+
+        Query query = entityManager.createNativeQuery(queryStr)
+                .setParameter("user_clerk_id1", friendRequest.getRequestingClerkId())
+                .setParameter("user_clerk_id2", friendRequest.getFriendToAddClerkId())
+                .setParameter("status", "PENDING");
+
+        int rowsAffected = query.executeUpdate();
+
+        return AddFriend
+                .builder()
+                .successString("message")
+                .build();
     }
 }
