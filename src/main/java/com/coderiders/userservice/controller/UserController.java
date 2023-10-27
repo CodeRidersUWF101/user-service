@@ -1,6 +1,7 @@
 package com.coderiders.userservice.controller;
 
 import com.coderiders.commonutils.models.UserLibraryWithBookDetails;
+import com.coderiders.commonutils.models.UtilsUser;
 import com.coderiders.commonutils.models.googleBooks.SaveBookRequest;
 import com.coderiders.commonutils.models.requests.UpdateProgress;
 import com.coderiders.userservice.models.db.User;
@@ -59,8 +60,14 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public com.coderiders.commonutils.models.User addNewUser(@RequestBody com.coderiders.commonutils.models.User user) {
+    public UtilsUser addNewUser(@RequestBody UtilsUser user) {
         log.info("/users/signup POST ENDPOINT HIT: " + user.getClerkId());
         return userService.addNewUser(user);
+    }
+
+    @PostMapping("/getByClerkIds")
+    public List<UtilsUser> getUsersByClerkId(@RequestBody List<String> clerkIds) {
+        log.info("/users/getByClerkId GET ENDPOINT HIT: " + clerkIds);
+        return userService.getAllUsersByClerkId(clerkIds);
     }
 }

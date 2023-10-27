@@ -1,5 +1,6 @@
 package com.coderiders.userservice.services.Impl;
 
+import com.coderiders.commonutils.models.UtilsUser;
 import com.coderiders.commonutils.models.requests.UpdateProgress;
 import com.coderiders.userservice.exceptions.UserServiceException;
 import com.coderiders.userservice.models.db.User;
@@ -9,6 +10,8 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -21,6 +24,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final EntityManager entityManager;
+    private final NamedParameterJdbcTemplate jdbcTemplate;
 
     public List<User> getAllUsersWithFirstName(String firstName) {
         return userRepository.findByFirstName(firstName);
@@ -31,7 +35,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public com.coderiders.commonutils.models.User addNewUser(com.coderiders.commonutils.models.User user) {
+    public UtilsUser addNewUser(UtilsUser user) {
 
         User newUser = User.builder()
                 .clerkId(user.getClerkId())
@@ -77,13 +81,29 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
-    private com.coderiders.commonutils.models.User userToOtherUserDTO(User user) {
-        com.coderiders.commonutils.models.User retUser = new com.coderiders.commonutils.models.User();
+    private UtilsUser userToOtherUserDTO(User user) {
+        UtilsUser retUser = new UtilsUser();
 
         retUser.setClerkId(user.getClerkId());
         retUser.setFirstName(user.getFirstName());
         retUser.setLastName(user.getLastName());
         retUser.setUsername(user.getUsername());
         return retUser;
+    }
+
+    @Override
+    public List<UtilsUser> getAllUsersByClerkId(List<String> clerkIds) {
+        String sql = "SELECT * FROM users WHERE clerk_id IN (:clerkIds)";
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("clerkIds", clerkIds);
+        return jdbcTemplate.query(sql, parameters, (rs, rowNum) -> {
+            UtilsUser user = new UtilsUser();
+            user.setClerkId(rs.getString("clerk_id"));
+            user.setFirstName(rs.getString("first_name"));
+            user.setLastName(rs.getString("last_name"));
+            user.setUsername(rs.getString("username"));
+            user.setImageUrl(rs.getString("image_url"));
+            return user;
+        });
     }
 }

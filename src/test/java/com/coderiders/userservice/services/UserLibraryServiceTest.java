@@ -1,5 +1,6 @@
 package com.coderiders.userservice.services;
 
+import com.coderiders.commonutils.models.UtilsUser;
 import com.coderiders.commonutils.models.googleBooks.SaveBookRequest;
 import com.coderiders.userservice.models.db.Book;
 import com.coderiders.userservice.models.db.User;
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDateTime;
@@ -36,6 +38,8 @@ public class UserLibraryServiceTest {
     private BookRepository bookRepository;
     @Mock
     private UserRepository userRepository;
+    @Mock
+    private NamedParameterJdbcTemplate jdbcTemplate;
 
     // used to service the controller
     private UserServiceImpl userServiceImpl;
@@ -43,11 +47,14 @@ public class UserLibraryServiceTest {
     private UserLibraryServiceImpl userBooksServiceImpl;
     private EntityManager entityManager;
 
+
+
+
     // implement the mocked databases into the service we are testing
     @BeforeEach
     void setUp() {
         userBooksServiceImpl = new UserLibraryServiceImpl(userBookRepository, bookRepository, entityManager);
-        userServiceImpl = new UserServiceImpl(userRepository, entityManager);
+        userServiceImpl = new UserServiceImpl(userRepository, entityManager, jdbcTemplate);
     }
 
     // find user test find a user object based off of clerk ID
@@ -123,8 +130,8 @@ public class UserLibraryServiceTest {
                 .build();
     }
 
-    private static com.coderiders.commonutils.models.User getModelsUser() {
-        return com.coderiders.commonutils.models.User.builder().
+    private static UtilsUser getModelsUser() {
+        return UtilsUser.builder().
                 username("Dill").
                 firstName("Dillon").
                 lastName("Vaughan").

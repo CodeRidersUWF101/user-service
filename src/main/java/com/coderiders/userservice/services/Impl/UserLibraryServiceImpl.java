@@ -1,7 +1,7 @@
 package com.coderiders.userservice.services.Impl;
 
-import com.coderiders.commonutils.models.User;
 import com.coderiders.commonutils.models.UserLibraryWithBookDetails;
+import com.coderiders.commonutils.models.UtilsUser;
 import com.coderiders.commonutils.models.googleBooks.SaveBookRequest;
 import com.coderiders.userservice.exceptions.UserServiceException;
 import com.coderiders.userservice.models.ReadingStatus;
@@ -54,7 +54,7 @@ public class UserLibraryServiceImpl implements UserLibraryService {
     @Override
     @Transactional
     public String saveBookCustom(SaveBookRequest bookRequest) {
-        User user = bookRequest.getUser();
+        UtilsUser user = bookRequest.getUser();
         UserLibraryWithBookDetails book = bookRequest.getBook();
         try {
 
