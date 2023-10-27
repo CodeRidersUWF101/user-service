@@ -1,5 +1,6 @@
 package com.coderiders.userservice.services;
 
+import com.coderiders.commonutils.models.UtilsUser;
 import com.coderiders.userservice.models.db.User;
 import com.coderiders.userservice.repositories.UserRepository;
 import com.coderiders.userservice.services.Impl.UserServiceImpl;
@@ -61,7 +62,7 @@ public class UserServiceTests {
 
     @Test
     void shouldAddNewUserWhenUserDoesNotExist() {
-        com.coderiders.commonutils.models.User commonUser = new com.coderiders.commonutils.models.User();
+        UtilsUser commonUser = new UtilsUser();
         commonUser.setClerkId("JD001");
         commonUser.setUsername("john_doe");
         commonUser.setFirstName("John");
@@ -70,7 +71,7 @@ public class UserServiceTests {
         when(userRepository.findByClerkId(anyString())).thenReturn(null);
         when(userRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
-        com.coderiders.commonutils.models.User returnedUser = userService.addNewUser(commonUser);
+        UtilsUser returnedUser = userService.addNewUser(commonUser);
 
         assertNotNull(returnedUser);
         assertEquals(commonUser.getClerkId(), returnedUser.getClerkId(), "ClerkId mismatch");
@@ -86,7 +87,7 @@ public class UserServiceTests {
     @Test
     void shouldReturnExistingUserWhenUserAlreadyExists() {
         User dbUser = getUser();
-        com.coderiders.commonutils.models.User commonUser = new com.coderiders.commonutils.models.User();
+        UtilsUser commonUser = new UtilsUser();
         commonUser.setClerkId("JD001");
         commonUser.setUsername("john_doe");
         commonUser.setFirstName("John");
@@ -94,7 +95,7 @@ public class UserServiceTests {
 
         when(userRepository.findByClerkId(anyString())).thenReturn(dbUser);
 
-        com.coderiders.commonutils.models.User returnedUser = userService.addNewUser(commonUser);
+        UtilsUser returnedUser = userService.addNewUser(commonUser);
 
         assertNotNull(returnedUser);
         assertEquals(commonUser.getClerkId(), returnedUser.getClerkId(), "ClerkId mismatch");

@@ -1,8 +1,12 @@
 package com.coderiders.userservice.utilities;
 
 import com.coderiders.commonutils.models.UserLibraryWithBookDetails;
+import com.coderiders.commonutils.models.UtilsUser;
 import com.coderiders.commonutils.models.googleBooks.GoogleBook;
 import com.coderiders.userservice.models.db.Book;
+import com.coderiders.userservice.models.db.User;
+
+import java.util.List;
 
 public class Utilities {
 
@@ -90,5 +94,18 @@ public class Utilities {
                 .smallThumbnail(bookDetails.getSmall_thumbnail())
                 .thumbnail(bookDetails.getThumbnail())
                 .build();
+    }
+
+    public static List<UtilsUser> usersToUtilUsers(List<User> users) {
+        return users.stream()
+                .map(user -> UtilsUser.builder()
+                        .clerkId(user.getClerkId())
+                        .username(user.getUsername())
+                        .firstName(user.getFirstName())
+                        .lastName(user.getLastName())
+                        .imageUrl(user.getImageUrl())
+                        .build())
+                .toList();
+
     }
 }
