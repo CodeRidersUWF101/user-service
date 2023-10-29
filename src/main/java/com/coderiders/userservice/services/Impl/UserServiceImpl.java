@@ -108,20 +108,30 @@ public class UserServiceImpl implements UserService {
         });
     }
 
+    @Override
     public AddFriend addFriend(AddFriend friendRequest) {
-        String queryStr = "INSERT INTO Friends (user_clerk_id1, user_clerk_id2, status) " +
-                "VALUES (:user_clerk_id1, :user_clerk_id2, :status)";
+        String queryStr = "INSERT INTO Friends (user_clerk_id1, user_clerk_id2, status) VALUES (?, ?, ?)";
+        String firstUser;
+        String secondUser;
+
+        if (friendRequest.getRequestingClerkId().compareTo(friendRequest.getFriendToAddClerkId()) > 0) {
+            firstUser = friendRequest.getFriendToAddClerkId();
+            secondUser = friendRequest.getRequestingClerkId();
+        } else {
+            firstUser = friendRequest.getRequestingClerkId();
+            secondUser = friendRequest.getFriendToAddClerkId();
+        }
 
         Query query = entityManager.createNativeQuery(queryStr)
-                .setParameter("user_clerk_id1", friendRequest.getRequestingClerkId())
-                .setParameter("user_clerk_id2", friendRequest.getFriendToAddClerkId())
-                .setParameter("status", "PENDING");
+                .setParameter(1, firstUser)
+                .setParameter(2, secondUser)
+                .setParameter(3, "PENDING");
 
-        int rowsAffected = query.executeUpdate();
+        query.executeUpdate();
 
         return AddFriend
                 .builder()
-                .successString("message")
+                .successString("SUCCESS")
                 .build();
     }
 }
