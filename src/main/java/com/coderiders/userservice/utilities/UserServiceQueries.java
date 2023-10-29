@@ -1,10 +1,5 @@
 package com.coderiders.userservice.utilities;
 
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
 public class UserServiceQueries {
 
     public final static String sqlQueryFindFriendsNotBlocked = """
