@@ -12,4 +12,5 @@ public interface UserService {
     UtilsUser addNewUser(UtilsUser user);
     UpdateProgress updateReadingProgress(UpdateProgress updateProgress);
     List<UtilsUser> getAllUsersByClerkId(List<String> clerkIds);
+    List<UtilsUser> getAllUsersNotBlocked(String clerk_id);
 }
