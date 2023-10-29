@@ -9,6 +9,7 @@ import com.coderiders.userservice.repositories.UserRepository;
 import com.coderiders.userservice.services.UserService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -109,6 +110,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public AddFriend addFriend(AddFriend friendRequest) {
         String queryStr = "INSERT INTO Friends (user_clerk_id1, user_clerk_id2, status) VALUES (?, ?, ?)";
         String firstUser;
