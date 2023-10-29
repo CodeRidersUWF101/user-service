@@ -110,8 +110,8 @@ public class UserServiceImpl implements UserService {
 
     public List<UtilsUser> getAllUsersNotBlocked(String clerk_Id) {
         MapSqlParameterSource parameters = new MapSqlParameterSource();
-        parameters.addValue("clerkId", clerk_Id);
-        String sql = UserServiceQueries.getAllUsersThatAreNotBlocked(clerk_Id);
+        parameters.addValue("first", clerk_Id);
+        String sql = UserServiceQueries.sqlQueryFindFriendsNotBlocked;
         return jdbcTemplate.query(sql, parameters, (rs, rowNum) ->
                 new UtilsUser(rs.getString("username"),
                         rs.getString("first_name"),
