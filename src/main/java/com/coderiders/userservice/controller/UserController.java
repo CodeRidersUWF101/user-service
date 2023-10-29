@@ -3,6 +3,7 @@ package com.coderiders.userservice.controller;
 import com.coderiders.commonutils.models.UserLibraryWithBookDetails;
 import com.coderiders.commonutils.models.UtilsUser;
 import com.coderiders.commonutils.models.googleBooks.SaveBookRequest;
+import com.coderiders.commonutils.models.requests.GetFriendsBooks;
 import com.coderiders.commonutils.models.requests.UpdateProgress;
 import com.coderiders.commonutils.models.requests.AddFriend;
 import com.coderiders.userservice.models.db.User;
@@ -78,5 +79,10 @@ public class UserController {
         return userService.addFriend(friendRequest);
     }
 
+    @GetMapping("/retrieveFriends")
+    public List<GetFriendsBooks> GetFriendsBooks(@RequestParam("clerkId") String clerkId) {
+        log.info("/users/retrieveFriends GET ENDPOINT HIT: " + clerkId);
+        return userService.getFriendsBooks(clerkId);
+    }
 
 }
