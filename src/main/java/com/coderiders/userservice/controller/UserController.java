@@ -12,9 +12,11 @@ import com.coderiders.userservice.services.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.hibernate.exception.ConstraintViolationException;
 
 import java.util.List;
 
@@ -76,7 +78,14 @@ public class UserController {
     @PostMapping("/addFriends")
     public AddFriend addFriend(@RequestBody AddFriend friendRequest) {
         log.info("/users/signup POST ENDPOINT HIT: " + friendRequest.getRequestingClerkId() + "   " + friendRequest.getFriendToAddClerkId());
-        return userService.addFriend(friendRequest);
+        try {
+            return userService.addFriend(friendRequest);
+        } catch (ConstraintViolationException e) {
+            return AddFriend
+                    .builder()
+                    .successString("DUPLICATE_RECORD")
+                    .build();
+        }
     }
 
     @GetMapping("/retrieveFriends")

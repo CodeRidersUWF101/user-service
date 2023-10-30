@@ -13,6 +13,7 @@ import jakarta.persistence.Query;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -130,12 +131,13 @@ public class UserServiceImpl implements UserService {
                 .setParameter(2, secondUser)
                 .setParameter(3, "PENDING");
 
-        query.executeUpdate();
+            query.executeUpdate();
 
         return AddFriend
                 .builder()
                 .successString("SUCCESS")
                 .build();
+
     }
 
     @Override
