@@ -18,4 +18,5 @@ public interface UserService {
     AddFriend addFriend(AddFriend friendRequest);
     List<GetFriendsBooks> getFriendsBooks(String clerkId);
     UpdateFriendRequest updateFriendRequest(UpdateFriendRequest updateRequest);
+    List<UtilsUser> getAllUsersNotBlocked(String clerk_id);
 }
