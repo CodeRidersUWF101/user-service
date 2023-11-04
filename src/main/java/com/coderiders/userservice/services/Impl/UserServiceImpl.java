@@ -8,6 +8,7 @@ import com.coderiders.userservice.exceptions.UserServiceException;
 import com.coderiders.userservice.models.db.User;
 import com.coderiders.userservice.repositories.UserRepository;
 import com.coderiders.userservice.services.UserService;
+import com.coderiders.userservice.utilities.UserServiceQueries;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import jakarta.transaction.Transactional;
@@ -151,6 +152,19 @@ public class UserServiceImpl implements UserService {
             friends_books.setFriend_name(rs.getString("first_name") + " " + rs.getString("last_name"));
             return friends_books;
         });
-
     }
+
+    public List<UtilsUser> getAllUsersNotBlocked(String clerk_Id) {
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("first", clerk_Id);
+        String sql = UserServiceQueries.sqlQueryFindFriendsNotBlocked;
+        return jdbcTemplate.query(sql, parameters, (rs, rowNum) ->
+                new UtilsUser(rs.getString("username"),
+                        rs.getString("first_name"),
+                        rs.getString("last_name"),
+                        rs.getString("clerk_id"),
+                        rs.getString("image_url")
+                ));
+    }
+  
 }

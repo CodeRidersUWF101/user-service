@@ -93,5 +93,12 @@ public class UserController {
         log.info("/users/retrieveFriends GET ENDPOINT HIT: " + clerkId);
         return userService.getFriendsBooks(clerkId);
     }
+  
+    @GetMapping("/getUsers/")
+    public List<UtilsUser> getUsersForAddFriendsPage(@RequestParam("clerk_id") String clerkId) {
+        log.info("/users/getUsers GET ENDPOINT HIT with clerkId: " + clerkId);
+
+        return userService.getAllUsersNotBlocked(clerkId);
+    }
 
 }
