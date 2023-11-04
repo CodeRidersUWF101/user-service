@@ -3,6 +3,7 @@ package com.coderiders.userservice.services.Impl;
 import com.coderiders.commonutils.models.UtilsUser;
 import com.coderiders.commonutils.models.requests.AddFriend;
 import com.coderiders.commonutils.models.requests.GetFriendsBooks;
+import com.coderiders.commonutils.models.requests.UpdateFriendRequest;
 import com.coderiders.commonutils.models.requests.UpdateProgress;
 import com.coderiders.userservice.exceptions.UserServiceException;
 import com.coderiders.userservice.models.db.User;
@@ -152,5 +153,34 @@ public class UserServiceImpl implements UserService {
             return friends_books;
         });
 
+    }
+
+    @Override
+    @Transactional
+    public UpdateFriendRequest updateFriendRequest(UpdateFriendRequest updateRequest) {
+        String sql = "UPDATE friends SET status = ? WHERE user_clerk_id1 = ? AND user_clerk_id2 = ?;";
+
+  /*      String firstUser;
+        String secondUser;
+        if (updateRequest.getClerkId().compareTo(updateRequest.getFriendId()) > 0) {
+            firstUser = updateRequest.getFriendId();
+            secondUser = updateRequest.getClerkId();
+        } else {
+            firstUser = updateRequest.getClerkId();
+            secondUser = updateRequest.getFriendId();
+        } */
+
+
+        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        System.out.println(updateRequest.getClerkId() + "   " + updateRequest.getFriendId() + "   " + updateRequest.getStatus());
+
+        Query query = entityManager.createNativeQuery(sql)
+                .setParameter(1, updateRequest.getStatus())
+                .setParameter(2, updateRequest.getClerkId())
+                .setParameter(3, updateRequest.getFriendId());
+
+        int rowsAffected = query.executeUpdate();
+
+        return updateRequest;
     }
 }

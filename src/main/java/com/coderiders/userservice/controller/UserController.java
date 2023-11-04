@@ -4,6 +4,7 @@ import com.coderiders.commonutils.models.UserLibraryWithBookDetails;
 import com.coderiders.commonutils.models.UtilsUser;
 import com.coderiders.commonutils.models.googleBooks.SaveBookRequest;
 import com.coderiders.commonutils.models.requests.GetFriendsBooks;
+import com.coderiders.commonutils.models.requests.UpdateFriendRequest;
 import com.coderiders.commonutils.models.requests.UpdateProgress;
 import com.coderiders.commonutils.models.requests.AddFriend;
 import com.coderiders.userservice.models.db.User;
@@ -89,9 +90,15 @@ public class UserController {
     }
 
     @GetMapping("/retrieveFriends")
-    public List<GetFriendsBooks> GetFriendsBooks(@RequestParam("clerkId") String clerkId) {
+    public List<GetFriendsBooks> getFriendsBooks(@RequestParam("clerkId") String clerkId) {
         log.info("/users/retrieveFriends GET ENDPOINT HIT: " + clerkId);
         return userService.getFriendsBooks(clerkId);
+    }
+
+    @PutMapping("/updateFriends")
+    public UpdateFriendRequest updateFriendRequest(@RequestBody UpdateFriendRequest updateRequest) {
+        log.info("/users/updateFriends PUT ENDPOINT HIT: " + updateRequest.getClerkId());
+        return userService.updateFriendRequest(updateRequest);
     }
 
 }
