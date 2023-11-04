@@ -1,6 +1,8 @@
 package com.coderiders.userservice.services;
 
 import com.coderiders.commonutils.models.UtilsUser;
+import com.coderiders.commonutils.models.requests.AddFriend;
+import com.coderiders.commonutils.models.requests.GetFriendsBooks;
 import com.coderiders.commonutils.models.requests.UpdateProgress;
 import com.coderiders.userservice.models.db.User;
 
@@ -12,5 +14,7 @@ public interface UserService {
     UtilsUser addNewUser(UtilsUser user);
     UpdateProgress updateReadingProgress(UpdateProgress updateProgress);
     List<UtilsUser> getAllUsersByClerkId(List<String> clerkIds);
+    AddFriend addFriend(AddFriend friendRequest);
+    List<GetFriendsBooks> getFriendsBooks(String clerkId);
     List<UtilsUser> getAllUsersNotBlocked(String clerk_id);
 }
