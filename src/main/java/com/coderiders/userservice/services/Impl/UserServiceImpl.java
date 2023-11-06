@@ -49,6 +49,7 @@ public class UserServiceImpl implements UserService {
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .signupDate(LocalDateTime.now())
+                .imageUrl(user.getImageUrl())
                 .build();
 
         User dbUser = userRepository.findByClerkId(user.getClerkId());
