@@ -1,10 +1,10 @@
 package com.coderiders.userservice.services.Impl;
 
-import com.coderiders.commonutils.models.UserLibraryWithBookDetails;
-import com.coderiders.commonutils.models.UtilsUser;
-import com.coderiders.commonutils.models.googleBooks.SaveBookRequest;
 import com.coderiders.userservice.exceptions.UserServiceException;
 import com.coderiders.userservice.models.ReadingStatus;
+import com.coderiders.userservice.models.commonutils.models.UserLibraryWithBookDetails;
+import com.coderiders.userservice.models.commonutils.models.UtilsUser;
+import com.coderiders.userservice.models.commonutils.models.googleBooks.SaveBookRequest;
 import com.coderiders.userservice.models.db.Book;
 import com.coderiders.userservice.models.db.UserLibrary;
 import com.coderiders.userservice.repositories.BookRepository;

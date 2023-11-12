@@ -1,6 +1,6 @@
 package com.coderiders.userservice.services.Impl;
 
-import com.coderiders.commonutils.models.googleBooks.GoogleBook;
+import com.coderiders.userservice.models.commonutils.models.googleBooks.GoogleBook;
 import com.coderiders.userservice.models.db.Book;
 import com.coderiders.userservice.repositories.BookRepository;
 import com.coderiders.userservice.services.BooksService;

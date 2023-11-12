@@ -1,9 +1,14 @@
 package com.coderiders.userservice.controller;
 
-import com.coderiders.commonutils.models.UserLibraryWithBookDetails;
-import com.coderiders.commonutils.models.UtilsUser;
-import com.coderiders.commonutils.models.googleBooks.SaveBookRequest;
-import com.coderiders.commonutils.models.requests.UpdateProgress;
+
+import com.coderiders.userservice.models.commonutils.models.SmallUser;
+import com.coderiders.userservice.models.commonutils.models.UserLibraryWithBookDetails;
+import com.coderiders.userservice.models.commonutils.models.UtilsUser;
+import com.coderiders.userservice.models.commonutils.models.googleBooks.SaveBookRequest;
+import com.coderiders.userservice.models.commonutils.models.requests.AddFriend;
+import com.coderiders.userservice.models.commonutils.models.requests.GetFriendsBooks;
+import com.coderiders.userservice.models.commonutils.models.requests.UpdateFriendRequest;
+import com.coderiders.userservice.models.commonutils.models.requests.UpdateProgress;
 import com.coderiders.userservice.models.db.User;
 import com.coderiders.userservice.services.UserLibraryService;
 import com.coderiders.userservice.services.UserService;
@@ -13,6 +18,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.hibernate.exception.ConstraintViolationException;
 
 import java.util.List;
 
@@ -71,11 +77,43 @@ public class UserController {
         return userService.getAllUsersByClerkId(clerkIds);
     }
 
+    @PostMapping("/addFriends")
+    public AddFriend addFriend(@RequestBody AddFriend friendRequest) {
+        log.info("/users/signup POST ENDPOINT HIT: " + friendRequest.getRequestingClerkId() + "   " + friendRequest.getFriendToAddClerkId());
+
+        try {
+            return userService.addFriend(friendRequest);
+        } catch (ConstraintViolationException e) {
+            return AddFriend
+                    .builder()
+                    .successString("DUPLICATE_RECORD")
+                    .build();
+        }
+    }
+
+    @GetMapping("/friends/pending")
+    public List<SmallUser> getPendingFriends(@RequestParam("clerk_id") String clerkId) {
+        log.info("/users/friends GET ENDPOINT HIT: " + clerkId);
+        return userService.getPendingFriends(clerkId);
+    }
+
+    @GetMapping("/retrieveFriends")
+    public List<GetFriendsBooks> getFriendsBooks(@RequestParam("clerkId") String clerkId) {
+        log.info("/users/retrieveFriends GET ENDPOINT HIT: " + clerkId);
+        return userService.getFriendsBooks(clerkId);
+    }
+
     @GetMapping("/getUsers/")
     public List<UtilsUser> getUsersForAddFriendsPage(@RequestParam("clerk_id") String clerkId) {
         log.info("/users/getUsers GET ENDPOINT HIT with clerkId: " + clerkId);
 
         return userService.getAllUsersNotBlocked(clerkId);
+    }
+
+    @PutMapping("/updateFriends")
+    public UpdateFriendRequest updateFriendRequest(@RequestBody UpdateFriendRequest updateRequest) {
+        log.info("/users/updateFriends PUT ENDPOINT HIT: " + updateRequest.getClerkId());
+        return userService.updateFriendRequest(updateRequest);
     }
 
 }

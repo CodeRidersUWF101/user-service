@@ -1,8 +1,9 @@
 package com.coderiders.userservice.services;
 
 
-import com.coderiders.commonutils.models.UserLibraryWithBookDetails;
-import com.coderiders.commonutils.models.googleBooks.SaveBookRequest;
+
+import com.coderiders.userservice.models.commonutils.models.UserLibraryWithBookDetails;
+import com.coderiders.userservice.models.commonutils.models.googleBooks.SaveBookRequest;
 
 import java.util.List;
 
