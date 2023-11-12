@@ -1,6 +1,6 @@
 package com.coderiders.userservice.services;
 
-import com.coderiders.commonutils.models.UtilsUser;
+import com.coderiders.userservice.models.commonutils.models.UtilsUser;
 import com.coderiders.userservice.models.db.User;
 import com.coderiders.userservice.repositories.UserRepository;
 import com.coderiders.userservice.services.Impl.UserServiceImpl;

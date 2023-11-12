@@ -1,19 +1,20 @@
 package com.coderiders.userservice.controller;
 
-import com.coderiders.commonutils.models.UserLibraryWithBookDetails;
-import com.coderiders.commonutils.models.UtilsUser;
-import com.coderiders.commonutils.models.googleBooks.SaveBookRequest;
-import com.coderiders.commonutils.models.requests.GetFriendsBooks;
-import com.coderiders.commonutils.models.requests.UpdateFriendRequest;
-import com.coderiders.commonutils.models.requests.UpdateProgress;
-import com.coderiders.commonutils.models.requests.AddFriend;
+
+import com.coderiders.userservice.models.commonutils.models.SmallUser;
+import com.coderiders.userservice.models.commonutils.models.UserLibraryWithBookDetails;
+import com.coderiders.userservice.models.commonutils.models.UtilsUser;
+import com.coderiders.userservice.models.commonutils.models.googleBooks.SaveBookRequest;
+import com.coderiders.userservice.models.commonutils.models.requests.AddFriend;
+import com.coderiders.userservice.models.commonutils.models.requests.GetFriendsBooks;
+import com.coderiders.userservice.models.commonutils.models.requests.UpdateFriendRequest;
+import com.coderiders.userservice.models.commonutils.models.requests.UpdateProgress;
 import com.coderiders.userservice.models.db.User;
 import com.coderiders.userservice.services.UserLibraryService;
 import com.coderiders.userservice.services.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -79,6 +80,7 @@ public class UserController {
     @PostMapping("/addFriends")
     public AddFriend addFriend(@RequestBody AddFriend friendRequest) {
         log.info("/users/signup POST ENDPOINT HIT: " + friendRequest.getRequestingClerkId() + "   " + friendRequest.getFriendToAddClerkId());
+
         try {
             return userService.addFriend(friendRequest);
         } catch (ConstraintViolationException e) {
@@ -89,12 +91,18 @@ public class UserController {
         }
     }
 
+    @GetMapping("/friends/pending")
+    public List<SmallUser> getPendingFriends(@RequestParam("clerk_id") String clerkId) {
+        log.info("/users/friends GET ENDPOINT HIT: " + clerkId);
+        return userService.getPendingFriends(clerkId);
+    }
+
     @GetMapping("/retrieveFriends")
     public List<GetFriendsBooks> getFriendsBooks(@RequestParam("clerkId") String clerkId) {
         log.info("/users/retrieveFriends GET ENDPOINT HIT: " + clerkId);
         return userService.getFriendsBooks(clerkId);
     }
-  
+
     @GetMapping("/getUsers/")
     public List<UtilsUser> getUsersForAddFriendsPage(@RequestParam("clerk_id") String clerkId) {
         log.info("/users/getUsers GET ENDPOINT HIT with clerkId: " + clerkId);

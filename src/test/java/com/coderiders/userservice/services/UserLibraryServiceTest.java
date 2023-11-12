@@ -1,7 +1,7 @@
 package com.coderiders.userservice.services;
 
-import com.coderiders.commonutils.models.UtilsUser;
-import com.coderiders.commonutils.models.googleBooks.SaveBookRequest;
+import com.coderiders.userservice.models.commonutils.models.UtilsUser;
+import com.coderiders.userservice.models.commonutils.models.googleBooks.SaveBookRequest;
 import com.coderiders.userservice.models.db.Book;
 import com.coderiders.userservice.models.db.User;
 import com.coderiders.userservice.models.db.UserLibrary;

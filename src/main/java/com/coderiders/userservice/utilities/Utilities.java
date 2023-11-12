@@ -1,8 +1,8 @@
 package com.coderiders.userservice.utilities;
 
-import com.coderiders.commonutils.models.UserLibraryWithBookDetails;
-import com.coderiders.commonutils.models.UtilsUser;
-import com.coderiders.commonutils.models.googleBooks.GoogleBook;
+import com.coderiders.userservice.models.commonutils.models.UserLibraryWithBookDetails;
+import com.coderiders.userservice.models.commonutils.models.UtilsUser;
+import com.coderiders.userservice.models.commonutils.models.googleBooks.GoogleBook;
 import com.coderiders.userservice.models.db.Book;
 import com.coderiders.userservice.models.db.User;
 
@@ -108,4 +108,22 @@ public class Utilities {
                 .toList();
 
     }
+
+    public static String determineDisplayName(String username, String firstName, String lastName, String clerkId) {
+        if (username != null && !username.trim().isEmpty()) {
+            return username;
+        }
+
+        if (firstName != null || lastName != null) {
+            String first = (firstName != null) ? firstName : "";
+            String last = (lastName != null) ? lastName : "";
+            String returnVal = first + " " + last;
+            return returnVal.trim().isEmpty() ? clerkId : returnVal.trim();
+        }
+
+        return clerkId;
+    }
+
+
+
 }

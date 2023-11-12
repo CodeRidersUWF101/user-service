@@ -1,15 +1,19 @@
 package com.coderiders.userservice.services.Impl;
 
-import com.coderiders.commonutils.models.UtilsUser;
-import com.coderiders.commonutils.models.requests.AddFriend;
-import com.coderiders.commonutils.models.requests.GetFriendsBooks;
-import com.coderiders.commonutils.models.requests.UpdateFriendRequest;
-import com.coderiders.commonutils.models.requests.UpdateProgress;
+
 import com.coderiders.userservice.exceptions.UserServiceException;
+import com.coderiders.userservice.models.commonutils.models.SmallUser;
+import com.coderiders.userservice.models.commonutils.models.UtilsUser;
+import com.coderiders.userservice.models.commonutils.models.requests.AddFriend;
+import com.coderiders.userservice.models.commonutils.models.requests.GetFriendsBooks;
+import com.coderiders.userservice.models.commonutils.models.requests.UpdateFriendRequest;
+import com.coderiders.userservice.models.commonutils.models.requests.UpdateProgress;
 import com.coderiders.userservice.models.db.User;
 import com.coderiders.userservice.repositories.UserRepository;
 import com.coderiders.userservice.services.UserService;
 import com.coderiders.userservice.utilities.UserServiceQueries;
+import com.coderiders.userservice.utilities.Queries;
+import com.coderiders.userservice.utilities.Utilities;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import jakarta.transaction.Transactional;
@@ -145,15 +149,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<GetFriendsBooks> getFriendsBooks(String clerkId) {
-        String sql = "SELECT * FROM get_friends_last_updated_books(:clerk_id) LIMIT 3;";
+        String sql = "SELECT * FROM get_friends_last_updated_books(:clerk_id) LIMIT 5;";
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("clerk_id", clerkId);
-        return jdbcTemplate.query(sql, parameters, (rs, rowNum) -> {
-            GetFriendsBooks friends_books = new GetFriendsBooks();
-            friends_books.setBook_title(rs.getString("last_book_title"));
-            friends_books.setFriend_name(rs.getString("first_name") + " " + rs.getString("last_name"));
-            return friends_books;
-        });
+        return jdbcTemplate.query(sql, parameters, (rs, rowNum) -> GetFriendsBooks.builder()
+                .username(rs.getString("username"))
+                .firstName(rs.getString("first_name"))
+                .lastName(rs.getString("last_name"))
+                .clerkId(rs.getString("clerk_id"))
+                .imageUrl(rs.getString("image_url"))
+                .lastBookTitle(rs.getString("last_book_title"))
+                .lastBookId(rs.getString("last_book_api_id"))
+                .lastBookUpdated(rs.getString("last_book_updated"))
+                .build());
     }
 
     public List<UtilsUser> getAllUsersNotBlocked(String clerk_Id) {
@@ -167,6 +175,28 @@ public class UserServiceImpl implements UserService {
                         rs.getString("clerk_id"),
                         rs.getString("image_url")
                 ));
+    }
+
+
+    @Override
+    public List<SmallUser> getPendingFriends(String clerkId) {
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("clerkId", clerkId);
+
+        return jdbcTemplate.query(Queries.GET_PENDING_FRIENDS, parameters, (rs, rowNum) -> {
+            SmallUser user = new SmallUser();
+            String clerk_id = rs.getString("clerk_id");
+            String displayName = Utilities.determineDisplayName(
+                    rs.getString("username"),
+                    rs.getString("first_name"),
+                    rs.getString("last_name"),
+                    clerk_id);
+
+            user.setClerkId(clerk_id);
+            user.setDisplayName(displayName);
+            user.setAvatarUrl(rs.getString("image_url"));
+            return user;
+        });
     }
 
     @Override
