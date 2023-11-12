@@ -108,4 +108,22 @@ public class Utilities {
                 .toList();
 
     }
+
+    public static String determineDisplayName(String username, String firstName, String lastName, String clerkId) {
+        if (username != null && !username.trim().isEmpty()) {
+            return username;
+        }
+
+        if (firstName != null || lastName != null) {
+            String first = (firstName != null) ? firstName : "";
+            String last = (lastName != null) ? lastName : "";
+            String returnVal = first + " " + last;
+            return returnVal.trim().isEmpty() ? clerkId : returnVal.trim();
+        }
+
+        return clerkId;
+    }
+
+
+
 }

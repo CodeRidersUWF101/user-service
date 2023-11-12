@@ -88,12 +88,18 @@ public class UserController {
         }
     }
 
+    @GetMapping("/friends/pending")
+    public List<SmallUser> getPendingFriends(@RequestParam("clerk_id") String clerkId) {
+        log.info("/users/friends GET ENDPOINT HIT: " + clerkId);
+        return userService.getPendingFriends(clerkId);
+    }
+
     @GetMapping("/retrieveFriends")
     public List<GetFriendsBooks> GetFriendsBooks(@RequestParam("clerkId") String clerkId) {
         log.info("/users/retrieveFriends GET ENDPOINT HIT: " + clerkId);
         return userService.getFriendsBooks(clerkId);
     }
-  
+
     @GetMapping("/getUsers/")
     public List<UtilsUser> getUsersForAddFriendsPage(@RequestParam("clerk_id") String clerkId) {
         log.info("/users/getUsers GET ENDPOINT HIT with clerkId: " + clerkId);
