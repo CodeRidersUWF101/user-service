@@ -1,5 +1,6 @@
 package com.coderiders.userservice.controller;
 
+import com.coderiders.commonutils.models.SmallUser;
 import com.coderiders.commonutils.models.UserLibraryWithBookDetails;
 import com.coderiders.commonutils.models.UtilsUser;
 import com.coderiders.commonutils.models.googleBooks.SaveBookRequest;
