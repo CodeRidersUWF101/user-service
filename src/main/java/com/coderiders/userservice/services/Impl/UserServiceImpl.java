@@ -4,6 +4,7 @@ import com.coderiders.commonutils.models.SmallUser;
 import com.coderiders.commonutils.models.UtilsUser;
 import com.coderiders.commonutils.models.requests.AddFriend;
 import com.coderiders.commonutils.models.requests.GetFriendsBooks;
+import com.coderiders.commonutils.models.requests.UpdateFriendRequest;
 import com.coderiders.commonutils.models.requests.UpdateProgress;
 import com.coderiders.userservice.exceptions.UserServiceException;
 import com.coderiders.userservice.models.db.User;
@@ -51,6 +52,7 @@ public class UserServiceImpl implements UserService {
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .signupDate(LocalDateTime.now())
+                .imageUrl(user.getImageUrl())
                 .build();
 
         User dbUser = userRepository.findByClerkId(user.getClerkId());
@@ -191,4 +193,20 @@ public class UserServiceImpl implements UserService {
             return user;
         });
     }
+
+    @Override
+    @Transactional
+    public UpdateFriendRequest updateFriendRequest(UpdateFriendRequest updateRequest) {
+        String sql = "UPDATE friends SET status = ? WHERE user_clerk_id1 = ? AND user_clerk_id2 = ?;";
+
+        Query query = entityManager.createNativeQuery(sql)
+                .setParameter(1, updateRequest.getStatus())
+                .setParameter(2, updateRequest.getClerkId())
+                .setParameter(3, updateRequest.getFriendId());
+
+        int rowsAffected = query.executeUpdate();
+
+        return updateRequest;
+    }
+
 }
