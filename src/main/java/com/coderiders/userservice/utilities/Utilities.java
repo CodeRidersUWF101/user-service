@@ -1,8 +1,8 @@
 package com.coderiders.userservice.utilities;
 
-import com.coderiders.commonutils.models.UserLibraryWithBookDetails;
-import com.coderiders.commonutils.models.UtilsUser;
-import com.coderiders.commonutils.models.googleBooks.GoogleBook;
+import com.coderiders.userservice.models.commonutils.models.UserLibraryWithBookDetails;
+import com.coderiders.userservice.models.commonutils.models.UtilsUser;
+import com.coderiders.userservice.models.commonutils.models.googleBooks.GoogleBook;
 import com.coderiders.userservice.models.db.Book;
 import com.coderiders.userservice.models.db.User;
 
