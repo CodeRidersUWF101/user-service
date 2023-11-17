@@ -116,4 +116,11 @@ public class UserController {
         return userService.updateFriendRequest(updateRequest);
     }
 
+    @GetMapping("/getFriends/")
+    public List<String> getFriends(@RequestParam("user_clerk_Id1") String user_clerk_Id1) {
+        log.info("/users/getFriends GET ENDPOINT HIT with clerkId: " + user_clerk_Id1);
+        return userService.getAllFriends(user_clerk_Id1);
+    }
+
+
 }

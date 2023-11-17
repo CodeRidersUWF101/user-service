@@ -18,4 +18,11 @@ public class UserServiceQueries {
                 AND clerk_id != :first
                 """;
 
+    public final static String getSqlQueryFindFriends = """
+            SELECT u.user_clerk_Id2
+            FROM Friends u
+            WHERE user_clerk_Id1 = :first
+            AND status = 'CONFIRMED';
+            """;
+
 }

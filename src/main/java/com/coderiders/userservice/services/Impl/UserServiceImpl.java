@@ -214,4 +214,11 @@ public class UserServiceImpl implements UserService {
         return updateRequest;
     }
 
+    public List<String> getAllFriends(String user_clerk_Id1) {
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("first", user_clerk_Id1);
+        String sql = UserServiceQueries.getSqlQueryFindFriends;
+        return jdbcTemplate.query(sql, parameters, (rs, rowNum) ->
+                new String(rs.getString("user_clerk_Id2")));
+    }
 }
