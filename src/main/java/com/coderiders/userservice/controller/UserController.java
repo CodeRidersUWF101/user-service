@@ -117,10 +117,8 @@ public class UserController {
     }
 
     @GetMapping("/getFriends/")
-    public List<String> getFriends(@RequestParam("user_clerk_Id1") String user_clerk_Id1) {
-        log.info("/users/getFriends GET ENDPOINT HIT with clerkId: " + user_clerk_Id1);
-        return userService.getAllFriends(user_clerk_Id1);
+    public List<String> getFriends(@RequestParam("clerk_id") String clerk_id) {
+        log.info("/users/getFriends GET ENDPOINT HIT with clerkId: " + clerk_id);
+        return userService.getAllFriends(clerk_id);
     }
-
-
 }
