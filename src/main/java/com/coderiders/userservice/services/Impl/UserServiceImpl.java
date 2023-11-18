@@ -25,6 +25,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -215,10 +216,17 @@ public class UserServiceImpl implements UserService {
     }
 
     public List<String> getAllFriends(String user_clerk_Id1) {
+        List<String> returnData = new ArrayList<>();
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("first", user_clerk_Id1);
         String sql = UserServiceQueries.getSqlQueryFindFriends;
-        return jdbcTemplate.query(sql, parameters, (rs, rowNum) ->
+        returnData = jdbcTemplate.query(sql, parameters, (rs, rowNum) ->
                 new String(rs.getString("user_clerk_Id2")));
+        for (int i = 0; i < returnData.size(); i++) {
+            if (returnData.get(i).contains(user_clerk_Id1)) {
+                returnData.remove(i);
+            }
+        }
+        return returnData;
     }
 }
