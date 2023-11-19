@@ -21,4 +21,5 @@ public interface UserService {
     List<GetFriendsBooks> getFriendsBooks(String clerkId);
     UpdateFriendRequest updateFriendRequest(UpdateFriendRequest updateRequest);
     List<UtilsUser> getAllUsersNotBlocked(String clerk_id);
+    List<String> getAllFriends(String user_clerk_Id1);
 }

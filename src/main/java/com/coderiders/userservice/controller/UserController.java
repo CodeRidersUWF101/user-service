@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.hibernate.exception.ConstraintViolationException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -116,4 +117,9 @@ public class UserController {
         return userService.updateFriendRequest(updateRequest);
     }
 
+    @GetMapping("/getFriends/")
+    public List<String> getFriends(@RequestParam("clerk_id") String clerk_id) {
+        log.info("/users/getFriends GET ENDPOINT HIT with clerkId: " + clerk_id);
+        return userService.getAllFriends(clerk_id);
+    }
 }
