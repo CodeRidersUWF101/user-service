@@ -139,7 +139,7 @@ public class UserServiceImpl implements UserService {
                 .setParameter(2, secondUser)
                 .setParameter(3, "PENDING");
 
-            query.executeUpdate();
+        query.executeUpdate();
 
         return AddFriend
                 .builder()
